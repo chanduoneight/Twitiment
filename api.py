@@ -90,6 +90,11 @@ def fetch_hashtag(hashtag: str, max_results: int = 10):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.get("/")
+def read_root():
+    return {"message": "Twitiment API is running"}
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
