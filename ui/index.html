@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitiment</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="Twitiment Logo" class="logo-icon">
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="home-page">
+                    <i class="fa-solid fa-house"></i> Home
+                </button>
+                <button class="nav-item" data-tab="text-analyzer">
+                    <i class="fa-solid fa-align-left"></i> Text Analyzer
+                </button>
+                <button class="nav-item" data-tab="tweet-analyzer">
+                    <i class="fa-solid fa-magnifying-glass"></i> Tweet Analysis
+                </button>
+                <button class="nav-item" data-tab="hashtag-search">
+                    <i class="fa-solid fa-hashtag"></i> Hashtag Search
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <h1>Twitiment</h1>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Loader -->
+                <div id="loader" class="loader hidden">
+                    <div class="spinner"></div>
+                </div>
+
+                <!-- Home Page Tab -->
+                <section id="home-page" class="tab-pane active">
+                    <div class="home-hero">
+                        <img src="logo.png" alt="Twitiment Logo" class="hero-logo">
+                        <h2>Twitiment</h2>
+                        <p>Uncover the emotional tone behind every tweet, thread, and conversation.</p>
+                        
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fa-solid fa-bolt"></i>
+                                <div class="feature-text">
+                                    <strong>Real-time API Integration</strong>
+                                    <span>Fetch and analyze live tweets or trending hashtags instantly using the X API.</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <div class="feature-text">
+                                    <strong>Live NLP Preprocessing</strong>
+                                    <span>See exactly how raw text is cleaned, tokenized, and lemmatized step-by-step.</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fa-solid fa-chart-pie"></i>
+                                <div class="feature-text">
+                                    <strong>VADER Sentiment Engine</strong>
+                                    <span>Accurately detect positive, neutral, and negative sentiment, including emoji awareness.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Text Analyzer Tab -->
+                <section id="text-analyzer" class="tab-pane">
+                    <div class="card input-card">
+                        <textarea id="text-input" placeholder="What is happening?!"></textarea>
+                        <div class="btn-container">
+                            <button id="analyze-text-btn" class="primary-btn">Analyze Sentiment</button>
+                        </div>
+                    </div>
+                    
+                    <div id="text-results" class="results-container hidden">
+                        <!-- Filled by JS -->
+                    </div>
+                </section>
+
+                <!-- Tweet Analyzer Tab -->
+                <section id="tweet-analyzer" class="tab-pane">
+                    <div class="card input-card">
+                        <h3>Analyze a Tweet</h3>
+                        <div class="input-group">
+                            <input type="text" id="tweet-url-input" placeholder="Paste Twitter/X URL or ID here...">
+                        </div>
+                        <div class="btn-container">
+                            <button id="analyze-tweet-btn" class="primary-btn">Fetch & Analyze</button>
+                        </div>
+                    </div>
+                    <div id="tweet-results" class="results-container hidden">
+                        <!-- Filled by JS -->
+                    </div>
+                </section>
+
+                <!-- Hashtag Search Tab -->
+                <section id="hashtag-search" class="tab-pane">
+                    <div class="card input-card">
+                        <h3>Search Hashtag</h3>
+                        <div class="input-group">
+                            <input type="text" id="hashtag-input" placeholder="e.g. artificialintelligence">
+                        </div>
+                        <div class="btn-container">
+                            <button id="search-hashtag-btn" class="primary-btn">Search</button>
+                        </div>
+                    </div>
+                    <div id="hashtag-results" class="results-container hidden">
+                        <!-- Filled by JS -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Template for Sentiment Results -->
+    <template id="sentiment-result-template">
+        <div class="card">
+            
+            <div class="preprocessing-card mb-4" style="display: none;">
+                <h4 style="font-size:1.1rem; margin-bottom:1rem;">Live Preprocessing Pipeline</h4>
+                <div class="pipeline-steps"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="overview-card mb-4">
+                    <div class="sentiment-score-circle">
+                        <span class="score-value"></span>
+                        <span class="score-label"></span>
+                    </div>
+                    <div class="details-card" style="flex:1;">
+                        <div class="progress-bar-group">
+                            <label>Positive <span class="pos-val"></span></label>
+                            <div class="progress-track"><div class="progress-fill pos-fill"></div></div>
+                        </div>
+                        <div class="progress-bar-group">
+                            <label>Neutral <span class="neu-val"></span></label>
+                            <div class="progress-track"><div class="progress-fill neu-fill"></div></div>
+                        </div>
+                        <div class="progress-bar-group">
+                            <label>Negative <span class="neg-val"></span></label>
+                            <div class="progress-track"><div class="progress-fill neg-fill"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="word-card">
+                <h4 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.5rem;">Word-Level Sentiment</h4>
+                <div class="word-chips"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tweet-card-template">
+        <div class="card tweet-card">
+            <div class="tweet-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="tweet-content">
+                <div class="tweet-header">
+                    <span class="author-id"></span>
+                    <span style="color:var(--text-secondary)">·</span>
+                    <span class="tweet-date"></span>
+                </div>
+                <p class="tweet-text"></p>
+                <div class="tweet-metrics">
+                    <span class="metric-reply-icon"><i class="fa-regular fa-comment"></i> <span class="metric-reply"></span></span>
+                    <span class="metric-rt-icon"><i class="fa-solid fa-retweet"></i> <span class="metric-rt"></span></span>
+                    <span class="metric-like-icon"><i class="fa-regular fa-heart"></i> <span class="metric-like"></span></span>
+                    <span><i class="fa-solid fa-chart-bar"></i></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+</html>
